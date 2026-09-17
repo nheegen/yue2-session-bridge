@@ -1,0 +1,26 @@
+# Generated music and request records can contain private prompts and lyrics.
+**/renders/
+**/*.asd
+*.als
+*.alp
+*.flac
+*.wav
+*.mp3
+*.aif
+*.aiff
+*.safetensors
+*.ckpt
+.test-output/
+dist/
+*.zip
+*.sha256
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.log
+
