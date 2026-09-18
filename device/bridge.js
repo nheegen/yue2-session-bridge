@@ -29,7 +29,7 @@ function start(max,options={}) {
   try {
    const {action,settings,snapshot}=JSON.parse(raw),base=String(settings.url||'http://127.0.0.1:8188').trim();
    send({ack:true});
-   if(action==='mode'){send({abc:core.modeABC(settings.abc||'',settings.renderMode)});return;}
+   if(action==='mode'){send({status:'Mode updated. Source ABC is preserved; the unwanted part is rested only in the submitted score.'});return;}
    if(action==='build') {
     built=core.build(snapshot,settings);
     const dir=renderDir;fs.mkdirSync(dir,{recursive:true});
@@ -47,7 +47,7 @@ function start(max,options={}) {
     await check(base);
     const settingsCopy={...settings,style:String(settings.style||'')+'\nMusical context: '+capture.key+', '+capture.tempo+' BPM.'};
     const graph=core.prompt(settingsCopy,settings.abc,capture.seconds);
-    send({abc:graph['9'].inputs.abc});
+    // Keep the editable source intact when submitting a mode-specific score.
     const clientId='yue2-session-'+require('crypto').randomUUID();
     send({progress:0,stage:'Connecting / queued'});
     watcher=await progress.connect(base,clientId,send);
@@ -79,7 +79,7 @@ function start(max,options={}) {
     }
     throw new Error('Stopped waiting after 60 minutes. The ComfyUI job was not cancelled.');
    }finally{if(watcher)watcher.close();busy=false;}
-  }catch(e){send({status:'Error: '+e.message,stage:'Error — see status'});}
+  }catch(e){send({status:'Error: '+e.message,stage:'Error â€” see status'});}
  });
  send({status:'Bridge started. Add clips and Build ABC.'});
 }

@@ -43,7 +43,7 @@ ui('rendermode','umenu',498,24,205,22,varname='rendermode',items=['Vocals only',
 box('mode_message','newobj',820,710,145,22,text='prepend rendermode');wire('rendermode','mode_message');wire('mode_message','controller')
 field('style',498,50,205,86,'')
 label('lyricslabel','Lyrics',716,4,205);field('lyrics',716,24,205,112,'')
-label('abclabel','ABC preview — editable',934,4,260);field('abc',934,24,310,78,'')
+label('abclabel','ABC preview â€” editable',934,4,260);field('abc',934,24,310,78,'')
 button('build','1  Build ABC','collect build',934,110,147)
 button('generate','2  Generate','collect generate',1090,110,154)
 label('destlabel','Send audio to track',1258,4,245)
@@ -73,7 +73,7 @@ help_text = {
  'url': ('ComfyUI address', 'Address of your running ComfyUI server. The default is http://127.0.0.1:8188 for a server on this computer. Use Test connection to check the required YuE2 nodes.'),
  'test': ('Test connection', 'Check that the device can reach ComfyUI and that the required workflow nodes are available. This does not generate audio or load the model.'),
  'style': ('Sound / style description', 'Describe the sound, instruments, genre and performance you want, such as an arpeggiated 1980s synth or breathy vocals. Musical context from the last ABC build is added to the request.'),
- 'rendermode': ('Generation mode', 'Vocals only requests a cappella and sends lyrics. Instrumental only omits lyrics and requests no singing. Vocals + instruments sends lyrics and requests accompaniment. Switching modes updates the generated ABC part labels without changing the notes or chords. Use the description for instruments, vocal character and genre. These are model instructions, not guaranteed stem isolation.'),
+ 'rendermode': ('Generation mode', 'Vocals only requests a cappella and sends lyrics. Instrumental only omits lyrics and requests no singing. Vocals + instruments sends lyrics and requests accompaniment. The source ABC stays intact. On submission, Vocals only rests the Ins part; Instrumental only rests the Vocal part while keeping chord symbols. Use the description for instruments, vocal character and genre. These are model instructions, not guaranteed stem isolation.'),
  'lyrics': ('Lyrics', 'Lyrics sent to YuE2 in Vocals only and Vocals + instruments modes. They are retained here but omitted from Instrumental requests. You can use section tags such as [verse] and [chorus].'),
  'abc': ('Editable ABC score', 'Score built from the configured source clips. Review chord names and edit if needed. Generate uses this text; Build ABC replaces it and any manual edits.'),
  'build': ('Build ABC', 'Read the source MIDI clips and Live tempo, meter and scale, then create an ABC score for the requested bars. Rebuild after changing sources, MIDI, key, tempo or length. This replaces manual ABC edits and does not generate audio.'),

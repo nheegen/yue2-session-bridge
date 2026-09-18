@@ -33,10 +33,44 @@ function expand(clip,total,grid) {
  return result;
 }
 function length(n) { return n===1?'':String(n); }
-function modeABC(abc,mode) {
- const target=mode==='instrumental'?'Harmony':'Vocal';
- return String(abc).replace(/^(V:\s*)(Vocal|Harmony)\b([^\r\n]*)/gm,(_,prefix,id,tail)=>prefix+target+tail.replace(/\bname="(?:Vocal|Harmony)"/g,'name="'+target+'"'))
-  .replace(/\[V:\s*(?:Vocal|Harmony)\]/g,'[V: '+target+']');
+// Retain the native two-voice layout. Apply part suppression only to request copies.
+function modeABC(abc,mode='vocals') {
+ assert(['vocals','instrumental','combined'].includes(mode),'Unknown generation mode.');
+ const source=String(abc).replace(/(V:\s*)Harmony\b/g,'$1Vocal')
+  .replace(/name="Harmony"/g,'name="Vocal"');
+ let voice=null;
+ function select(id) {
+  assert(id==='Vocal'||id==='Ins','Use native ABC voices Vocal and Ins; unsupported voice: '+id);
+  voice=id;
+ }
+ return source.split(/\r?\n/).map(line=>{
+  const declaration=line.match(/^V:\s*(\w+)\b/);
+  if(declaration){select(declaration[1]);return line;}
+  if(/^\s*(?:%|$)/.test(line))return line;
+  if(/^[A-Za-z]:/.test(line)) {
+   assert(!/^[wW]:/.test(line),'Put lyrics in the Lyrics field, not ABC w: fields.');
+   return line;
+  }
+  let result='',pos=0;
+  // Tokenise before replacing: never edit chord names, voice IDs, or comments as notes.
+  const token=/\[V:\s*(Vocal|Ins)\s*\]|"[^"\r\n]*"|%.*$|\[[KMLQ]:[^\]]+\]|\[(?:[=^_]*[A-Ga-g][,']*)+\](?:\d+(?:\/\d*)?|\/+\d*)?-?|[=^_]*[A-Ga-g][,']*(?:\d+(?:\/\d*)?|\/+\d*)?-?|[zZxX](?:\d+(?:\/\d*)?|\/+\d*)?|[\s|]+/gy;
+  while(pos<line.length) {
+   token.lastIndex=pos;const m=token.exec(line);
+   assert(m,'Unsupported ABC near "'+line.slice(pos,pos+24)+'". Use plain notes, rests and native Vocal/Ins voices.');
+   let value=m[0];pos=token.lastIndex;
+   if(m[1])select(m[1]);
+   else if(!/^(?:\s|\||"|%|\[[KMLQ]:)/.test(value)) {
+    assert(voice,'ABC music needs a V: Vocal or V: Ins declaration.');
+    const mute=(mode==='instrumental'&&voice==='Vocal')||(mode==='vocals'&&voice==='Ins');
+    if(mute&&!/^[zZxX]/.test(value)) {
+     const duration=value.match(/(?:\d+(?:\/\d*)?|\/+\d*)(?=-?$)/);
+     value='z'+(duration?duration[0]:'');
+    }
+   }
+   result+=value;
+  }
+  return result;
+ }).join('\n');
 }
 function build(snapshot,options={}) {
  const bars=Number(options.bars||8), tempo=Number(snapshot.tempo), num=Number(snapshot.numerator),den=Number(snapshot.denominator);
@@ -93,7 +127,7 @@ function build(snapshot,options={}) {
   }
   return lines.join('\n');
  }
- const abc=modeABC(header.concat(['V: Vocal',voice('vocal'),'V: Ins',voice('ins')]).join('\n'),options.renderMode);
+ const abc=header.concat(['V: Vocal',voice('vocal'),'V: Ins',voice('ins')]).join('\n');
  return {abc,seconds:total*60/tempo,key:musicalKey,tempo,bars,segments,warnings:[...new Set(warnings)],sources:snapshot.clips.map(c=>c.name+' ('+c.role+')')};
 }
 function prompt(settings,abc,seconds) {
@@ -102,7 +136,7 @@ function prompt(settings,abc,seconds) {
  const seed=Number(settings.seed||Math.floor(Math.random()*2147483647));
  const instrumental=settings.renderMode==='instrumental';
  const instruction=instrumental?'Instrumental only, no vocals, no singing.':settings.renderMode==='combined'?'Vocals with instrumental accompaniment.':'Vocals only, a cappella, no instrumental accompaniment.';
- const style=(settings.style||'')+'\n'+instruction;
+ const style=instruction+'\n'+(settings.style||'');
  const lyrics=instrumental?'':(settings.lyrics||'');
  abc=modeABC(abc,settings.renderMode);
  return {

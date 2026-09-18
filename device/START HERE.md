@@ -1,4 +1,4 @@
-# YuE2 Session Bridge — 0.5.1 (experimental)
+# YuE2 Session Bridge â€” 0.5.1 (experimental)
 
 ## Three generation modes
 
@@ -8,7 +8,7 @@
 
 Use **Sound / style description** for details: synth arpeggios, choir, backing vocals, drum patterns, genre, effects and performance. Avoid contradictory instructions in that field when changing modes. Modes provide guidance to YuE2, not guaranteed stem isolation.
 
-Instrumental mode now uses **Harmony** instead of **Vocal** for the generated ABC part, including its definitions and references. Building ABC uses the selected mode. Switching modes relabels that part in the editable preview, preserving the musical content; Generate also normalizes the labels before sending. The bass/harmony part stays unchanged. Custom voice names other than the device's Vocal/Harmony labels are preserved.
+The ABC editor holds the full source score with native `Vocal` and `Ins` voice IDs in every mode. These IDs describe the score format, not a guarantee of audible vocals. At submission, Instrumental only replaces Vocal notes with timed rests and omits lyrics; Vocals only replaces Ins notes with timed rests. Chord symbols and timing remain. Combined keeps both parts. Switching modes and generating do not overwrite your source notes or lyrics. The request JSON in renders contains the actual submitted score. Legacy Harmony IDs are converted to Vocal. Unsupported custom voices or music syntax produce an error rather than silently bypassing the mode filter.
 
 All visible controls and labels now include Info View descriptions. Open Ableton's Info View and hover over a control to read its purpose and relevant behaviour.
 
@@ -65,7 +65,7 @@ The stored text fields are configured as Live parameters for saving with the Set
 - Recognizes common triads, sevenths, suspensions, sixths, and selected ninths. Inversions use slash chords. Ambiguous matches are reported.
 - Keeps unrecognized voicings as simultaneous notes in the instrumental lane instead of inventing a chord name.
 - Writes bass-role notes into the instrumental lane. If bass notes overlap, the lowest active note wins.
-- Writes chord annotations over rests in the Vocal or Harmony lane, according to the selected mode, leaving musical invention to YuE2. No separately composed vocal melody is inserted.
+- Writes chord annotations over rests in the native Vocal lane, leaving musical invention to YuE2. No separately composed vocal melody is inserted.
 - Rounds MIDI timing to a 1/32-note grid. Muted/zero-probability notes are excluded; other probabilistic notes are included as fixed notes. Groove, MIDI effects, MPE, audio transcription, and microtonal tuning are not captured.
 - Uses correct bar durations, explicit pitch accidentals, and a supported ABC key signature. Other scale names are included as textual tonal context.
 

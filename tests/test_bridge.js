@@ -100,10 +100,17 @@ async function main(){
  bridge.start({addHandler:(name,fn)=>{handler=fn;},outlet:(name,json)=>{messages.push(JSON.parse(json));}},{renderDir:dir});
  try {
   const settings={bars:8,key:'auto',style:'breathy',lyrics:'hello',url:'http://127.0.0.1:'+fake.address().port};
-  await handler(JSON.stringify({action:'build',settings,snapshot:snap([clip(progression)])}));
+  await handler(JSON.stringify({action:'build',settings,snapshot:snap([clip(progression),clip(notes([38],0,16),'bass')])}));
   settings.abc=messages.find(m=>m.abc).abc+'\n% Manual edit preserved';
+  const sourceABC=settings.abc;
+  settings.renderMode='vocals';
+  await handler(JSON.stringify({action:'mode',settings}));
+  assert.equal(messages.filter(m=>m.abc).length,1);
   await handler(JSON.stringify({action:'generate',settings}));
-  assert.equal(actualABC,settings.abc);
+  assert.equal(actualABC,core.modeABC(sourceABC,'vocals'));
+  assert.notEqual(actualABC,sourceABC);
+  assert.equal(messages.filter(m=>m.abc).length,1);
+  assert.equal(settings.abc,sourceABC);
   assert.equal(messages.at(-1).progress,100);assert.ok(messages.at(-1).audioPath.endsWith('.flac'));
   assert.ok(messages.at(-1).status.startsWith('Saved:'),messages.at(-1).status);
   const files=fs.readdirSync(dir);assert.ok(files.some(f=>f.endsWith('.json')));

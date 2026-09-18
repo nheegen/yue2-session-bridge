@@ -49,7 +49,7 @@
             175,
             18
           ],
-          "text": "YuE2 SESSION / 0.5.1",
+          "text": "YuE2 SESSION / 0.5.2",
           "fontsize": 11,
           "textcolor": [
             0.78,
@@ -993,7 +993,7 @@
             }
           },
           "annotation_name": "Generation mode",
-          "annotation": "Vocals only requests a cappella and sends lyrics. Instrumental only omits lyrics and requests no singing. Vocals + instruments sends lyrics and requests accompaniment. Switching modes updates the generated ABC part labels without changing the notes or chords. Use the description for instruments, vocal character and genre. These are model instructions, not guaranteed stem isolation."
+          "annotation": "Vocals only requests a cappella and sends lyrics. Instrumental only omits lyrics and requests no singing. Vocals + instruments sends lyrics and requests accompaniment. The source ABC stays intact. On submission, Vocals only rests the Ins part; Instrumental only rests the Vocal part while keeping chord symbols. Use the description for instruments, vocal character and genre. These are model instructions, not guaranteed stem isolation."
         }
       },
       {
@@ -1183,7 +1183,7 @@
             260,
             18
           ],
-          "text": "ABC preview \u2014 editable",
+          "text": "ABC preview \u00e2\u20ac\u201d editable",
           "fontsize": 11,
           "textcolor": [
             0.78,

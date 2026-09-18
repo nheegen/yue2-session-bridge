@@ -2,7 +2,7 @@
 
 An experimental Max for Live MIDI device that uses your Session clips as harmonic guidance for music generation in ComfyUI.
 
-**Session MIDI â†’ chord/bass ABC â†’ YuE2 â†’ audio in a Session track**
+**Session MIDI Ã¢â€ â€™ chord/bass ABC Ã¢â€ â€™ YuE2 Ã¢â€ â€™ audio in a Session track**
 
 ## Features
 
@@ -35,6 +35,8 @@ Read [the device guide](device/START%20HERE.md) for source numbering, destinatio
 - A working YuE2 installation and hardware capable of running it. Models and ComfyUI are not included.
 
 The ComfyUI workflow settings are currently fixed in `device/core.js`; server address is editable in the device. This package is not a general-purpose workflow importer. Other checkpoint names or sampler settings require editing that file.
+
+The ABC editor preserves the full source score. Requests use native `Vocal`/`Ins` voice IDs: Vocals only rests instrumental notes; Instrumental only rests vocal notes and omits lyrics; Combined keeps both. Chord symbols and timing are preserved. See the device guide for supported editing and saved request scores.
 
 ## Limitations
 
